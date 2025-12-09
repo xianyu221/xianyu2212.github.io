@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>父母性别预测 - 纯娱乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .title {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .tips {
+            font-size: 12px;
+            color: #ff4444;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* 进度条样式 */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #409eff;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* 问题容器样式 */
+        .question-box {
+            display: none;
+            margin-bottom: 30px;
+            text-align: center; /* 容器内元素居中 */
+        }
+        .question-box.active {
+            display: block;
+        }
+        .question-title {
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        /* 答题按钮样式优化 + 居中 */
+        .answer-btn-group {
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            gap: 15px; /* 按钮间距 */
+            flex-wrap: wrap; /* 适配小屏幕 */
+        }
+        .answer-btn {
+            min-width: 120px; /* 最小宽度，保证按钮不挤压 */
+            padding: 14px 25px;
+            border: 2px solid #409eff;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.3s;
+            background: #fff;
+            color: #409eff;
+            cursor: pointer;
+        }
+        .answer-btn:hover {
+            background: #409eff;
+            color: #fff;
+            transform: translateY(-2px); /* 轻微上浮效果 */
+            box-shadow: 0 4px 8px rgba(64, 158, 255, 0.2);
+        }
+        .answer-btn:active {
+            transform: translateY(0); /* 点击回弹 */
+            box-shadow: 0 2px 4px rgba(64, 158, 255, 0.2);
+        }
+
+        /* 预测按钮样式优化 + 居中 */
+        #predict-btn {
+            display: none;
+            margin: 0 auto; /* 水平居中 */
+            min-width: 200px;
+            padding: 16px 30px;
+            background: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(64, 158, 255, 0.15);
+        }
+        #predict-btn:hover {
+            background: #337ecc;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(64, 158, 255, 0.2);
+        }
+        #predict-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 6px rgba(64, 158, 255, 0.15);
+        }
+
+        /* 结果区域 */
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f0f9ff;
+            text-align: center;
+            display: none;
+            border: 1px solid #e6f7ff;
+        }
+        .result-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .result-content {
+            font-size: 18px;
+            color: #409eff;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">父母性别预测</h1>
+        <p class="tips">⚠️ 本页面仅为娱乐效果，无任何科学依据！<br>父母性别为自然属性，无需预测，请勿轻信此类测试。</p>
+        
+        <!-- 进度条 -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- 问题1 -->
+        <div class="question-box active" id="question1">
+            <p class="question-title">1/3 你想知道父亲的性别还是母亲的性别？</p>
+            <div class="answer-btn-group">
+                <button class="answer-btn" data-next="2" data-value="father">父亲</button>
+                <button class="answer-btn" data-next="2" data-value="mother">母亲</button>
+            </div>
+        </div>
+
+        <!-- 问题2 -->
+        <div class="question-box" id="question2">
+            <p class="question-title">2/3 你爸妈是同一天结的婚？</p>
+            <div class="answer-btn-group">
+                <button class="answer-btn" data-next="3" data-value="yes">对</button>
+                <button class="answer-btn" data-next="3" data-value="no">不对</button>
+            </div>
+        </div>
+
+        <!-- 问题3 -->
+        <div class="question-box" id="question3">
+            <p class="question-title">3/3 你是你妈生的？</p>
+            <div class="answer-btn-group">
+                <button class="answer-btn" data-next="result" data-value="yes">对</button>
+                <button class="answer-btn" data-next="result" data-value="no">不对</button>
+            </div>
+        </div>
+
+        <!-- 预测按钮（答题完成后显示） -->
+        <button id="predict-btn">查看预测结果</button>
+        
+        <!-- 结果展示 -->
+        <div class="result" id="result-box">
+            <h2 class="result-title">预测结果</h2>
+            <p class="result-content" id="result-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const progressBar = document.getElementById('progressBar');
+        const questionBoxes = document.querySelectorAll('.question-box');
+        const answerBtns = document.querySelectorAll('.answer-btn');
+        const predictBtn = document.getElementById('predict-btn');
+        const resultBox = document.getElementById('result-box');
+        const resultText = document.getElementById('result-text');
+        
+        // 存储用户选择
+        let userAnswers = {
+            target: '', // father/mother
+            marry: '',  // yes/no
+            born: ''    // yes/no
+        };
+
+        // 答题按钮点击事件
+        answerBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nextStep = btn.dataset.next;
+                const value = btn.dataset.value;
+                const currentQuestion = btn.closest('.question-box');
+                const currentQId = currentQuestion.id;
+
+                // 存储用户答案
+                if (currentQId === 'question1') userAnswers.target = value;
+                if (currentQId === 'question2') userAnswers.marry = value;
+                if (currentQId === 'question3') userAnswers.born = value;
+
+                // 隐藏当前问题，显示下一步
+                currentQuestion.classList.remove('active');
+                if (nextStep !== 'result') {
+                    document.getElementById(`question${nextStep}`).classList.add('active');
+                    // 更新进度条
+                    progressBar.style.width = `${(parseInt(nextStep) / 3) * 100}%`;
+                } else {
+                    // 答题完成，显示预测按钮
+                    progressBar.style.width = '100%';
+                    predictBtn.style.display = 'block';
+                }
+            });
+        });
+
+        // 查看结果按钮点击事件
+        predictBtn.addEventListener('click', () => {
+            // 根据用户选择生成结果文案
+            let resultDesc = '';
+            if (userAnswers.target === 'father') {
+                const fatherTexts = [
+                    "父亲性别：男（自然属性，无需预测）",
+                    "父亲性别：男（这是人类的自然生理特征）",
+                    "父亲性别：男（此类测试无任何科学意义）"
+                ];
+                resultDesc = fatherTexts[Math.floor(Math.random() * 3)];
+            } else {
+                const motherTexts = [
+                    "母亲性别：女（自然属性，无需预测）",
+                    "母亲性别：女（这是人类的自然生理特征）",
+                    "母亲性别：女（此类测试无任何科学意义）"
+                ];
+                resultDesc = motherTexts[Math.floor(Math.random() * 3)];
+            }
+            
+            // 显示结果
+            resultText.textContent = resultDesc;
+            resultBox.style.display = 'block';
+            // 平滑滚动到结果区
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // 初始化进度条（第一个问题占33%）
+        progressBar.style.width = '33%';
+    </script>
+</body>
+</html>
